@@ -198,34 +198,30 @@ Python запрашивает у ОС арены памяти по 256 КБ и �
 ### Практическое задание
 Схема созданного графа:
 ```mermaid
-graph LR
-    classDef cycle fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#bf360c
-    classDef indep fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+graph TB
+    classDef unreachable fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+    classDef reachable fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef namespace fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#0d47a1
 
-    subgraph Namespace["Пространство имён"]
-        direction TB
-        node_a["node_a"]
-        node_b["node_b"]
-        node_c["node_c"]
-        node_d["node_d"]
+    subgraph heap["Память (heap)"]
+        direction LR
+        A["A<br/>dict {name:'A'}<br/>(недоступен)"]:::unreachable
+        B["B<br/>dict {name:'B'}<br/>(недоступен)"]:::unreachable
+        C["C<br/>dict {name:'C'}<br/>(недоступен)"]:::unreachable
+        D["D<br/>dict {name:'D', neighbors:[1]}<br/>id = 0x...d4"]:::reachable
     end
 
-    subgraph Heap["Память (heap)"]
-        direction TB
-        A["A<br/>dict {name:'A', neighbors:[...]}<br/>id = 0x...a1"]:::cycle
-        B["B<br/>dict {name:'B', neighbors:[...]}<br/>id = 0x...b2"]:::cycle
-        C["C<br/>dict {name:'C', neighbors:[...]}<br/>id = 0x...c3"]:::cycle
-        D["D<br/>dict {name:'D', neighbors:[]}<br/>id = 0x...d4"]:::indep
+    subgraph namespace["Пространство имён"]
+        node_d["node_d"]:::namespace
     end
 
-    node_a --> A
-    node_b --> B
-    node_c --> C
-    node_d --> D
-
-    A -->|neighbors[0]| B
-    B -->|neighbors[0]| C
-    C -->|neighbors[0]| A
+    %% Ссылки между объектами в heap (циклические)
+    A -->|ссылка| B
+    B -->|ссылка| C
+    C -->|ссылка| A
+    
+    %% Ссылка из пространства имён на объект D
+    node_d -->|ссылка| D
 ```
 ### Вопросы для анализа
 1. Циклическая ссылка возникает, когда два или более объекта ссылаются друг на друга (напрямую или через цепочку промежуточных объектов), образуя замкнутый контур.
