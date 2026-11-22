@@ -60,7 +60,7 @@ for j in range(len(measurements)):
         if flag_prost == 0 and i%deli == 0:
             flag_prost = 1
             break
-    if i == 1: flag_prost = 1
+    if i <= 1: flag_prost = 1
     if flag_prost == 0: prost+=1
 if flag_enter ==0: print('индекс элемента в исходном массиве: -1 (линейный поиск)')
 sr_ar = su/len(measurements)
